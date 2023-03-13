@@ -1,0 +1,38 @@
+{
+  "name": "t-components",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc && vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --ext .vue,.js,.ts,.jsx,.tsx --fix",
+    "format": "prettier --write \"./**/*.{html,vue,ts,js,json,md}\""
+  },
+  "peerDependencies": {
+    "vue": "^3.2.25"
+  },
+  "dependencies": {
+    "@tet/components": "workspace:*",
+    "@tet/constants": "workspace:*",
+    "@tet/utils": "workspace:*",
+    "@types/node": "^18.15.0",
+    "vue": "^3.2.47",
+    "@int/geotoolkit": "./libs/int/int-geotoolkit-3.4.68.tgz",
+    "@int/geotoolkit3d": "./libs/int/int-geotoolkit3d-3.4.68.tgz",
+    "@int/impl": "./libs/int/int-impl-3.4.68.tgz"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.26.0",
+    "@typescript-eslint/eslint-plugin": "^5.54.1",
+    "@typescript-eslint/parser": "^5.54.1",
+    "@vitejs/plugin-vue": "^4.0.0",
+    "eslint": "^8.35.0",
+    "eslint-plugin-vue": "^9.9.0",
+    "prettier": "^2.8.4",
+    "typescript": "^4.9.3",
+    "vite": "^4.1.0",
+    "vue-tsc": "^1.0.24"
+  }
+}
