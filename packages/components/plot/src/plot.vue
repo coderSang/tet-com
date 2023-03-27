@@ -1,59 +1,57 @@
 <script setup lang="ts">
 import { Plot } from '@int/geotoolkit3d/Plot'
-import { CompassAxis } from '@int/geotoolkit3d/scene/compass/CompassAxis'
-
 import { onMounted, provide, ref } from 'vue'
 import { propsMerge } from '@tet/utils'
 import { INJECT_PLOT_KEY } from '@tet/constants'
-import { defaultConfig } from './config'
-import { provideTETWrapper, updateTETWrapper } from '@tet/utils'
+import { defaultOptions } from './config'
+import { injectMethod } from './method'
+
 const props = defineProps({
-  config: {
+  options: {
     type: Object
   }
 })
 
-let finalConfig = propsMerge(defaultConfig, props.config)
 const plotDom = ref()
-const plot = ref()
+const plotRef = ref<Plot>()
+let plot: Plot
 
-provide(INJECT_PLOT_KEY, plot)
-const createScene = (divElement) => {
-  return new Plot({
+// 合并完的选项
+let finalOptions = propsMerge(defaultOptions, props.options)
+const createScene = (options, divElement = plotDom.value) => {
+  plot = new Plot({
+    ...options,
     container: divElement
   })
+  return plot
 }
+
 const getInstance = () => {
-  return plot.value
+  return plot
 }
-const methods = {
-  getRoot(plot) {
-    if (plot) {
-      return plot.getRoot()
-    }
-  },
-  setCompassObject(plot) {
-    if (plot) {
-      return plot.getCompass()
-    }
-  }
+const create = (options) => {
+  const mergeOptions = propsMerge(finalOptions, options)
+  plotRef.value = createScene(mergeOptions)
 }
-const getRoot = provideTETWrapper('getRoot')
-const setCompassObject = provideTETWrapper('setCompassObject')
-updateTETWrapper(getRoot, methods.getRoot)
-updateTETWrapper(setCompassObject, methods.setCompassObject)
+
+// 设置
 const setOptions = (config) => {
-  finalConfig = propsMerge(finalConfig, config)
-  plot?.value?.setOptions(finalConfig)
+  finalOptions = propsMerge(finalOptions, config)
+  plotRef?.value?.setOptions(finalOptions)
 }
+
+// 加载
 onMounted(() => {
-  plot.value = createScene(plotDom.value)
-  setOptions(finalConfig)
-  // plot.value.getCompass().setCompassObject(new CompassAxis())
+  create(finalOptions)
+  injectMethod(plot)
+  // 向下提供plot实例
+  provide(INJECT_PLOT_KEY, plot)
 })
+
 defineExpose({
-  grid: getInstance,
-  setOptions
+  plot: getInstance,
+  setOptions,
+  create
 })
 </script>
 <template>
@@ -61,7 +59,7 @@ defineExpose({
     ref="plotDom"
     :style="{ width: '100%', height: '100%', position: 'relative' }"
   ></div>
-  <template v-if="plot">
+  <template v-if="plotRef">
     <slot></slot>
   </template>
 </template>

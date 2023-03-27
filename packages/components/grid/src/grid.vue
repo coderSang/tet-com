@@ -2,79 +2,60 @@
   <slot></slot>
 </template>
 <script setup lang="ts">
-import { LineStyle } from '@int/geotoolkit/attributes/LineStyle'
-import { TextStyle } from '@int/geotoolkit/attributes/TextStyle'
-import { Vector3 } from '@int/geotoolkit3d/THREE'
+import { Object3D, Vector3 } from '@int/geotoolkit3d/THREE'
 import { Grid } from '@int/geotoolkit3d/scene/grid/Grid'
 import { Plot } from '@int/geotoolkit3d/Plot'
-import { inject, Ref, ref } from 'vue'
+import { inject, onMounted } from 'vue'
 import { INJECT_PLOT_KEY } from '@tet/constants'
 import { propsMerge } from '@tet/utils'
-import { CompassAxis } from '@int/geotoolkit3d/scene/compass/CompassAxis'
+import { defaultOptions } from './config'
 
 const props = defineProps({
-  config: Object
+  options: Object
 })
-const defaultConfig = {
-  start: new Vector3(0, 0, 0),
-  end: new Vector3(1000, 1000, 500),
-  visible: true,
-  grid: {
-    linestyles: {
-      x: new LineStyle({ color: 'darkgrey' }),
-      y: new LineStyle({ color: 'darkgrey' }),
-      z: new LineStyle({ color: 'darkgrey' })
-    }
-  },
-  axis: {
-    linestyles: {
-      x: new LineStyle({ color: 'black' }),
-      y: new LineStyle({ color: 'black' }),
-      z: new LineStyle({ color: 'black' })
-    },
-    textstyles: {
-      x: new TextStyle({ color: 'black' }),
-      y: new TextStyle({ color: 'black' }),
-      z: new TextStyle({ color: 'black' })
-    }
-  },
-  title: {
-    textstyles: {
-      x: new TextStyle({ color: 'black' }),
-      y: new TextStyle({ color: 'black' }),
-      z: new TextStyle({ color: 'black' })
-    },
-    texts: {
-      z: 'depth'
-    }
+
+let finalOptions = propsMerge(defaultOptions, props.options)
+const plot = inject<Plot>(INJECT_PLOT_KEY)
+
+let grid: Grid
+const setCameraDefault = () => {
+  const setRootUserData = inject<(Object) => void>('setRootUserData')
+  if (plot?.getCamera().position.equals(new Vector3(0, 0, 0))) {
+    plot.setCameraLocation(finalOptions.end)
+    plot.setCameraLookAt(finalOptions.start)
+    setRootUserData?.({
+      end: finalOptions.end,
+      start: finalOptions.start
+    })
   }
 }
-let finalConfig = propsMerge(defaultConfig, props.config)
-const plot = inject<Ref<Plot>>(INJECT_PLOT_KEY)
-const setCompassObject = inject('setCompassObject')
-console.log(setCompassObject)
-console.log(
-  (setCompassObject as unknown as any).setCompassObject(new CompassAxis())
-)
-const grid = ref<Grid>()
-grid.value = new Grid(finalConfig)
-plot?.value.getRoot().add(grid.value)
-// plot?.value.getRoot().userData.start = finalConfig.start
-if (plot?.value.getCamera().position.equals(new Vector3(0, 0, 0))) {
-  plot?.value.setCameraLocation(finalConfig.end)
-  plot?.value.setCameraLookAt(finalConfig.start)
+const createGrid = (finalOptions) => {
+  const root = inject<() => Object3D>('getRoot')?.()
+  grid = new Grid(finalOptions)
+  root?.add(new Grid(finalOptions))
+  setCameraDefault()
 }
+
 // 更新
-const setOptions = (config) => {
-  finalConfig = propsMerge(finalConfig, config)
-  grid?.value?.setOptions(finalConfig)
-  plot?.value.invalidateObject()
+const setOptions = (options) => {
+  finalOptions = propsMerge(finalOptions, options)
+  grid?.setOptions(finalOptions)
+  plot?.invalidateObject()
 }
 const getInstance = () => {
-  return grid.value
+  return grid
 }
+const create = (options) => {
+  const mergeOptions = propsMerge(finalOptions, options)
+  createGrid(mergeOptions)
+}
+onMounted(() => {
+  create(finalOptions)
+})
+
 defineExpose({
   grid: getInstance,
-  setOptions
+  setOptions,
+  create
 })
 </script>

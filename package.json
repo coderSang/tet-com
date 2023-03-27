@@ -14,14 +14,15 @@
     "vue": "^3.2.25"
   },
   "dependencies": {
+    "@int/geotoolkit": "./libs/int/int-geotoolkit-3.4.68.tgz",
+    "@int/geotoolkit3d": "./libs/int/int-geotoolkit3d-3.4.68.tgz",
+    "@int/impl": "./libs/int/int-impl-3.4.68.tgz",
     "@tet/components": "workspace:*",
     "@tet/constants": "workspace:*",
     "@tet/utils": "workspace:*",
     "@types/node": "^18.15.0",
-    "vue": "^3.2.47",
-    "@int/geotoolkit": "./libs/int/int-geotoolkit-3.4.68.tgz",
-    "@int/geotoolkit3d": "./libs/int/int-geotoolkit3d-3.4.68.tgz",
-    "@int/impl": "./libs/int/int-impl-3.4.68.tgz"
+    "protobufjs": "6",
+    "vue": "^3.2.47"
   },
   "devDependencies": {
     "@changesets/cli": "^2.26.0",

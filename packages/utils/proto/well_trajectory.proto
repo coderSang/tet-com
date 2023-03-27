@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+message WellTrajectory {
+    string name = 1;
+    double top_x = 2;
+    double top_y = 3;
+    double bottom_x = 4;
+    double bottom_y = 5;
+    double kb = 6;
+    repeated double dxs = 7;
+    repeated double dys = 8;
+    repeated double mds = 9;
+    repeated double tvds = 10;
+}
+
+message WellTrajectoryList {
+    repeated WellTrajectory trajectory_list = 1;
+}

@@ -1,0 +1,154 @@
+syntax = "proto3";
+
+
+message ObjectMeta{
+   int64  id =1;
+   int64  owner_id=2;
+   string name=3;
+   int32  object_type=4;      
+}
+message TraceHeaderInfo {
+    int32 line = 1;
+    int32 cdp = 2;
+    double x = 3;
+    double y = 4;
+}
+
+message Survey {
+    string name = 1;
+    TraceHeaderInfo p1 = 2;     // 根据3个点，可以计算得到第4个点坐标
+    TraceHeaderInfo p2 = 3;
+    TraceHeaderInfo p3 = 4;
+}
+
+message SurveyObject{
+    ObjectMeta meta = 1;
+	Survey survey = 2;
+}
+
+message Seismic {
+    string name = 1;
+    int32 line_min = 2;
+    int32 line_max = 3;
+    int32 cdp_min = 4;
+    int32 cdp_max = 5;
+    int32 trace_sample = 6;         // 每道数据的样点数
+    double depth_start = 7;         // 起始深度
+    double depth_interval = 8;      // 每个样点对应的深度
+    string depth_unit = 9;               // 单位， m or ft
+    string value_unit = 10;
+    string value_type = 11;
+	
+    repeated TraceHeaderInfo trace_header_list = 12; // 各道道头信息，按顺序排列
+	double min_value = 13;
+	double max_value = 14;
+}
+
+message SeismicHorizonPoint{
+
+    int32 line= 1;
+	int32 cdp =2;
+	double xcoord = 3;
+	double ycoord = 4;
+	double depth = 5;
+}
+
+message SeismicHorizonPointList{
+   repeated SeismicHorizonPoint points = 1;
+}
+
+message SeismicHorizonInfo{
+   ObjectMeta meta = 1;
+   int32 line_min=2;
+   int32 line_max=3;
+   int32 cdp_min=4;
+   int32 cdp_max=5;
+}
+
+message SeismicHorizonObject{ 
+   SeismicHorizonInfo Info = 1;
+   SeismicHorizonPointList data=2;
+}
+
+message SeismicFaultInfo{
+
+   ObjectMeta meta = 1;
+   int32 line_min=2;
+   int32 line_max=3;
+   int32 cdp_min=4;
+   int32 cdp_max=5;
+}
+
+message SeismicFaultPoint{
+
+    int32 line= 1;
+	int32 cdp =2;
+	double xcoord = 3;
+	double ycoord = 4;
+	double depth = 5;
+	int32  seq_id=6;
+}
+
+message SeismicFaultPointList{
+    repeated SeismicFaultPoint points = 1;
+}
+
+message SeismicFaultObject{ 
+   SeismicFaultInfo Info = 1;
+   SeismicFaultPointList data=2;
+}
+
+
+message SeismicObject{
+    ObjectMeta meta =1;
+	Seismic  seismic =2;
+}
+
+message TraceData {
+    TraceHeaderInfo trace_header = 1;
+    repeated double data = 2;
+}
+
+message SegyDataIndex {
+    enum DataFormat {
+        IEEE_FLOAT = 0;
+        IBM_FLOAT = 1;
+    }
+
+    DataFormat data_format = 1;
+    int32 line_index = 2;
+    int32 cdp_index = 3;
+    int32 x_index = 4;
+    int32 y_index = 5;
+    int32 start_index = 6;
+    int32 scale_index = 7;
+}
+
+message SegyDataQuery {
+    enum DataType {
+        LINE = 0;
+        CDP = 1;
+        ARBITRARY_LINE = 2;
+    }
+    DataType data_type = 1;
+    int32 line = 2;
+    int32 cdp = 3;
+    int64 arbitrary_line = 4;
+}
+
+message SegyData {
+    repeated TraceData data = 1;
+}
+
+message TraceDataList{
+    repeated TraceData Traces=1;
+}
+
+message TraceIdList{
+    repeated int32 TraceIds = 1;
+}
+
+
+message SurveyObjectList{
+   repeated SurveyObject Surveys = 1;
+}

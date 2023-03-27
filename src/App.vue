@@ -5,7 +5,7 @@ import { TGrid } from '@tet/components'
 
 <template>
   <div style="width: 900px; height: 900px">
-    <t-plot ref="plotRef" width="300px" height="400px">
+    <t-plot ref="plotRef">
       <t-grid ref="tGridRef"></t-grid>
     </t-plot>
   </div>

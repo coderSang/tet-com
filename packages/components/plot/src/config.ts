@@ -1,7 +1,7 @@
 import { CameraType } from '@int/geotoolkit3d/Plot'
 import { Vector3 } from '@int/geotoolkit3d/THREE'
 
-export const defaultConfig = {
+export const defaultOptions = {
   scale: new Vector3(1, 1, 1),
   renderer: {
     clearcolor: 'white',
@@ -9,7 +9,7 @@ export const defaultConfig = {
   },
   camera: {
     type: CameraType.Perspective,
-    position: new Vector3(0, 0, 0),
-    lookat: new Vector3(0, 0, 0)
+    position: new Vector3(),
+    lookat: new Vector3()
   }
 }
